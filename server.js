@@ -30,6 +30,32 @@ app.get('/api/blogs', async (req,res) =>{
   
 })
 
+app.get('/api/oneb/:id', async (req,res)=>{
+  try {
+    const id = req.params.id;
+    const data = await Blog.findById(id);
+    if(data){
+      res.status(200).json(data);
+    }
+    
+  } catch (error) {
+    res.json(error);
+  }
+})
+
+app.get('/api/trend', async (req,res)=>{
+  try {
+   
+    const data = await Blog.find(Blog.where('likes').gte(6).sort({ 'likes': -1 }).limit(4));
+    if(data){
+      res.status(200).json(data);
+    }
+    
+  } catch (error) {
+    res.json(error);
+  }
+})
+
 app.post('/api/post', async (req,res) =>{
   try {
     const blogdata = req.body;
