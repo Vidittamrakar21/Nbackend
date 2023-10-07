@@ -21,13 +21,49 @@ async function main() {
 
 app.get('/api/blogs', async (req,res) =>{
   try {
-    const alldata = await Blog.find();
+    const alldata = await Blog.find().sort({'date': -1});
     res.json(alldata);
 
   } catch (error) {
     res.json(error);
   }
   
+})
+
+app.get('/api/blogs/life', async (req,res) => {
+  try {
+    const alldata = await Blog.find({btype: "lifestyle"}).sort({'date': -1});
+    res.json(alldata);
+  } catch (error) {
+    res.json(error);
+  }
+})
+
+app.get('/api/blogs/tech', async (req,res) => {
+  try {
+    const alldata = await Blog.find({btype: "tech"}).sort({'date': -1});
+    res.json(alldata);
+  } catch (error) {
+    res.json(error);
+  }
+})
+
+app.get('/api/blogs/food', async (req,res) => {
+  try {
+    const alldata = await Blog.find({btype: "food"}).sort({'date': -1});
+    res.json(alldata);
+  } catch (error) {
+    res.json(error);
+  }
+})
+
+app.get('/api/blogs/entre', async (req,res) => {
+  try {
+    const alldata = await Blog.find({btype: "entrepreneurship"}).sort({'date': -1});
+    res.json(alldata);
+  } catch (error) {
+    res.json(error);
+  }
 })
 
 app.get('/api/oneb/:id', async (req,res)=>{
@@ -72,6 +108,19 @@ app.post('/api/post', async (req,res) =>{
     
   } catch (error) {
     res.status(500).json({message: "An error occured while creating a post, Kindly try again."})
+  }
+})
+
+app.post('/api/postcomment', async (req,res)=>{
+  try {
+
+    const {id , com, by} = req.body;
+
+    const comment = await Blog.updateOne({_id: id}, {$push: {comments: {by: by, mes: com}}});
+    res.status(201).json({info: comment, message: "comment posted successfully!"});
+    
+  } catch (error) {
+    res.status(200).json({message: "Can't able to post the comment ! Try again later"});
   }
 })
 
