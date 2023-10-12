@@ -28,7 +28,23 @@ async function main() {
 
 app.get('/api/blogs', async (req,res) =>{
   try {
-    const alldata = await Blog.find().sort({'date': -1});
+    let limit = parseInt(req.query.limit);
+    let page = parseInt(req.query.page) || 1;
+    const skip = (page - 1) * limit;
+    const alldata = await Blog.find().skip(skip).limit(limit).sort({'date': -1}).exec();
+    res.json(alldata);
+
+  } catch (error) {
+    res.json(error);
+  }
+  
+})
+
+app.get('/api/all', async (req,res) =>{
+  try {
+   
+
+    const alldata = await Blog.find()
     res.json(alldata);
 
   } catch (error) {
