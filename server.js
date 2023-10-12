@@ -99,13 +99,26 @@ app.get('/api/trend', async (req,res)=>{
   }
 })
 
-app.get('/api/search', async(req,res)=>{
+app.post('/api/search', async(req,res)=>{
   try {
-    const {item } = req.body;
-    const searchTerm = item;
-    const regex = new RegExp(searchTerm, 'i');
-  const data = await Blog.find({title: regex})
-  res.status(200).json(data);
+    const {searchval} = req.body;
+    if(!searchval){
+      res.status(200).json({message: "Search by any topic name in the bar, to find blogs related to that !"});
+    }
+
+    else{
+
+      const searchTerm = searchval;
+      const regex = new RegExp(searchTerm, 'i');
+      const data = await Blog.find({title: regex})
+      if(data.length === 0){
+        res.status(200).json({message: "empty"});
+      }
+      else{
+
+        res.status(200).json(data);
+      }
+    }
   } catch (error) {
     res.status(500).json(error);
     console.log(error)
