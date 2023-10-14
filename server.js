@@ -55,6 +55,9 @@ app.get('/api/all', async (req,res) =>{
 
 app.get('/api/blogs/life', async (req,res) => {
   try {
+    let limit = parseInt(req.query.limit);
+    let page = parseInt(req.query.page) || 1;
+    const skip = (page - 1) * limit;
     const alldata = await Blog.find({btype: "lifestyle"}).sort({'date': -1});
     res.json(alldata);
   } catch (error) {
