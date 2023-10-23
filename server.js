@@ -17,6 +17,7 @@ app.use(express.json());
 app.use(cors());
 app.use(cookieparser());
 app.use(morgan("tiny"));
+app.use(express.static('build'));
 
 main().catch(err => console.log(err));
 
@@ -25,6 +26,32 @@ async function main() {
   console.log("Database Connected");
 }
 
+const auth = (req,res,next) => {
+  try {
+   const {token} = req.cookies;
+   if(token){
+    const user = jwt.verify(token,process.env.SECRETKEY);
+    req.userID = user.id;
+    req.mail = user.email;
+    req.name = user.name;
+    res.json(user);
+   next();
+   }
+ 
+   else{
+     res.status(201).json({message: "declined"});
+     console.log("Kindly login first, to continue!")
+   }
+ 
+   
+  } catch (error) {
+   console.log(error);
+   res.send("something went wrong on authorizing user");
+  }
+   
+ }
+
+ app.get('/check', auth);
 
 app.get('/api/blogs', async (req,res) =>{
   try {
@@ -55,9 +82,7 @@ app.get('/api/all', async (req,res) =>{
 
 app.get('/api/blogs/life', async (req,res) => {
   try {
-    let limit = parseInt(req.query.limit);
-    let page = parseInt(req.query.page) || 1;
-    const skip = (page - 1) * limit;
+    
     const alldata = await Blog.find({btype: "lifestyle"}).sort({'date': -1});
     res.json(alldata);
   } catch (error) {
@@ -65,7 +90,7 @@ app.get('/api/blogs/life', async (req,res) => {
   }
 })
 
-app.get('/api/blogs/tech', async (req,res) => {
+app.get('/api/blogs/tech',async (req,res) => {
   try {
     const alldata = await Blog.find({btype: "tech"}).sort({'date': -1});
     res.json(alldata);
@@ -74,7 +99,7 @@ app.get('/api/blogs/tech', async (req,res) => {
   }
 })
 
-app.get('/api/blogs/food', async (req,res) => {
+app.get('/api/blogs/food' , async (req,res) => {
   try {
     const alldata = await Blog.find({btype: "food"}).sort({'date': -1});
     res.json(alldata);
