@@ -30,7 +30,7 @@ const auth = (req,res,next) => {
   try {
    const {token} = req.cookies;
    if(token){
-    const user = jwt.verify(token,process.env.SECRETKEY);
+    const user = jwt.verify(token,process.env.SECKEY);
     req.userID = user.id;
     req.mail = user.email;
     req.name = user.name;
@@ -46,12 +46,14 @@ const auth = (req,res,next) => {
    
   } catch (error) {
    console.log(error);
-   res.send("something went wrong on authorizing user");
+   res.send(error);
   }
    
  }
 
- app.get('/check', auth);
+ app.get('/check', auth,(req,res)=>{
+  res.json("success")
+ })
 
 app.get('/api/blogs', async (req,res) =>{
   try {
@@ -199,6 +201,36 @@ app.post('/api/postcomment', async (req,res)=>{
   } catch (error) {
     res.status(200).json({message: "Can't able to post the comment ! Try again later"});
   }
+})
+
+app.post('/api/postlike', async (req, res)=>{
+    try {
+      const {uid ,bid } = req.body;
+
+      const user = await User.findById(uid);
+      const blog = await Blog.findById(bid);
+      const alllikes = blog.likes;
+
+      if(user){
+        const like = user.postliked;
+        const data = like.find((element)=> element === bid);
+        if(data){
+          res.status(200).json({message: "Already liked this blog !"})
+        }
+        else{
+          const dolike = await User.updateOne({_id: uid}, {$push: {postliked: bid}});
+          const increment = await Blog.updateOne({_id: bid}, {likes: alllikes + 1 })
+          res.status(201).json({message: "you liked a blog !"})
+
+        } 
+
+      }
+
+      
+    } catch (error) {
+      res.status(200).json({message: "Can't able to like the blog ! Try again later"});
+      console.log(error)
+    }
 })
 
 app.patch('/', (req,res) =>{
