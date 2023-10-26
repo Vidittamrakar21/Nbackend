@@ -51,9 +51,7 @@ const auth = (req,res,next) => {
    
  }
 
- app.get('/check', auth,(req,res)=>{
-  res.json("success")
- })
+ app.get('/check', auth)
 
 app.get('/api/blogs', async (req,res) =>{
   try {
@@ -62,6 +60,7 @@ app.get('/api/blogs', async (req,res) =>{
     const skip = (page - 1) * limit;
     const alldata = await Blog.find().skip(skip).limit(limit).sort({'date': -1}).exec();
     res.json(alldata);
+    
 
   } catch (error) {
     res.json(error);
@@ -190,7 +189,7 @@ app.post('/api/post', async (req,res) =>{
   }
 })
 
-app.post('/api/postcomment', async (req,res)=>{
+app.post('/api/postcomment',async (req,res)=>{
   try {
 
     const {id , com, by} = req.body;
@@ -229,6 +228,34 @@ app.post('/api/postlike', async (req, res)=>{
       
     } catch (error) {
       res.status(200).json({message: "Can't able to like the blog ! Try again later"});
+      console.log(error)
+    }
+})
+
+app.post('/api/save', async (req, res)=>{
+    try {
+      const {uid ,bid } = req.body;
+
+      const user = await User.findById(uid);
+
+      if(user){
+        const sb = user.saved;
+        const data = sb.find((element)=> element === bid);
+        if(data){
+          res.status(200).json({message: "Already saved !"})
+        }
+        else{
+          const dosave = await User.updateOne({_id: uid}, {$push: {saved: bid}});
+         
+          res.status(201).json({message: "Blog Saved !"})
+
+        } 
+
+      }
+
+      
+    } catch (error) {
+      res.status(200).json({message: "Can't able to save the blog ! Try again later"});
       console.log(error)
     }
 })
