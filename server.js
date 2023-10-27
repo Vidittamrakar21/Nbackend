@@ -173,14 +173,21 @@ app.post('/api/search', async(req,res)=>{
 app.post('/api/post', async (req,res) =>{
   try {
     const blogdata = req.body;
-    const {title, image, btype , content , createdby } = blogdata;
-    if(!(title && image && btype && content && createdby)){
+    const {title, image, btype , content , createdby , userid} = blogdata;
+    if(!(title && image && btype && content && createdby && userid)){
       res.status(201).json({message: "Input fields can't be empty !"});
     }
 
     else{
       const newblog =  await Blog.create(blogdata);
-      res.status(201).json({message: "Blog posted successfully !", blog: newblog});
+      if(newblog){
+        const data = await User.updateOne({_id: userid}, {$push: {blogposted: newblog._id }});
+        res.status(201).json({message: "Blog posted successfully !", blog: newblog});
+      }
+      else{
+        res.status(201).json({message: "unable to post, try again later."});
+      }
+      
     }
    
     
@@ -277,6 +284,17 @@ app.delete('/', (req,res) =>{
 
 
 // user api's/////
+
+
+app.post('/api/getuser', async (req  , res)=>{
+  try {
+    const {id} = req.body;
+    const data = await User.findById(id);
+    res.status(200).json(data);
+  } catch (error) {
+    res.status(200).json({message: "Error uccured while finding user"})
+  }
+})
 
 app.post('/api/register', async (req,res) =>{
     try {
@@ -376,6 +394,66 @@ app.post('/api/login', async (req,res)=>{
   }
 })
 
+app.patch('/api/updatename', async (req,res)=>{
+  try {
+
+    const {name, uid} = req.body;
+    if(!(name && uid)){
+      res.status(201).json({message:"Input field can't be empty"})
+    }
+   else{
+    const data = await User.findByIdAndUpdate(uid, {name: name});
+    res.status(201).json({message:"name updated successfully!", bdata:data})
+   }
+    
+  } catch (error) {
+    res.status(200).json({messager: "Error occured while updating"})
+  }
+})
+
+app.patch('/api/updatemail', async (req,res)=>{
+  try {
+
+    const {mail, uid} = req.body;
+    if(!(mail && uid)){
+      res.status(201).json({message:"Input field can't be empty"})
+    }
+   else{
+    const data = await User.findByIdAndUpdate(uid, {email: mail});
+    res.status(201).json({message:"email updated successfully!", bdata:data})
+   }
+    
+  } catch (error) {
+    res.status(200).json({messager: "Error occured while updating"})
+  }
+})
+
+app.patch('/api/updateabout', async (req,res)=>{
+  try {
+
+    const {bio, uid} = req.body;
+    if(!(bio && uid)){
+      res.status(201).json({message:"Input field can't be empty"})
+    }
+   else{
+    const data = await User.findByIdAndUpdate(uid, {about: bio});
+    res.status(201).json({message:"bio updated successfully!", bdata:data})
+   }
+    
+  } catch (error) {
+    res.status(200).json({messager: "Error occured while updating"})
+  }
+})
+
+// app.patch('/api/update', async (req,res)=>{
+//   try {
+//     const {data} = req.body;
+//   const doupdate = await Blog.updateMany({createdby: data});
+//   res.status(200).json(doupdate);
+//   } catch (error) {
+//     res.json(error);
+//   }
+// })
 
 
 
