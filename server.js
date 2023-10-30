@@ -181,7 +181,9 @@ app.post('/api/post', async (req,res) =>{
     else{
       const newblog =  await Blog.create(blogdata);
       if(newblog){
-        const data = await User.updateOne({_id: userid}, {$push: {blogposted: newblog._id }});
+        const bid = newblog._id;
+        const bbid = bid.toString();
+        const data = await User.updateOne({_id: userid}, {$push: {blogposted: bbid }});
         res.status(201).json({message: "Blog posted successfully !", blog: newblog});
       }
       else{
@@ -193,6 +195,17 @@ app.post('/api/post', async (req,res) =>{
     
   } catch (error) {
     res.status(500).json({message: "An error occured while creating a post, Kindly try again."})
+  }
+})
+
+app.post('/api/bloggy', async (req,res)=>{
+  try {
+    const {bid,userid} = req.body;
+    const bbid = bid.toString();
+    const data = await User.updateOne({_id: userid}, {$push: {blogposted: bbid }});
+    res.status(201).json({message: "Blog posted successfully !"});
+  } catch (error) {
+    res.json(error)
   }
 })
 
