@@ -181,9 +181,8 @@ app.post('/api/post', async (req,res) =>{
     else{
       const newblog =  await Blog.create(blogdata);
       if(newblog){
-        const bid = newblog._id;
-        const bbid = bid.toString();
-        const data = await User.updateOne({_id: userid}, {$push: {blogposted: bbid }});
+        const bid = newblog;
+        const data = await User.updateOne({_id: userid}, {$push: {blogposted: bid }});
         res.status(201).json({message: "Blog posted successfully !", blog: newblog});
       }
       else{
@@ -201,8 +200,8 @@ app.post('/api/post', async (req,res) =>{
 app.post('/api/bloggy', async (req,res)=>{
   try {
     const {bid,userid} = req.body;
-    const bbid = bid.toString();
-    const data = await User.updateOne({_id: userid}, {$push: {blogposted: bbid }});
+    // const bid = bid.toString();
+    const data = await User.updateOne({_id: userid}, {$push: {blogposted: bid }});
     res.status(201).json({message: "Blog posted successfully !"});
   } catch (error) {
     res.json(error)
@@ -260,7 +259,7 @@ app.post('/api/save', async (req, res)=>{
 
       if(user){
         const sb = user.saved;
-        const data = sb.find((element)=> element === bid);
+        const data = sb.find((element)=> element._id === bid._id);
         if(data){
           res.status(200).json({message: "Already saved !"})
         }
@@ -456,6 +455,35 @@ app.patch('/api/updateabout', async (req,res)=>{
   } catch (error) {
     res.status(200).json({messager: "Error occured while updating"})
   }
+})
+
+app.post('/api/user/logout', async (req, res)=>{
+  try {
+
+    res.clearCookie("token");
+  
+    res.json({ message: 'Logged out successfully !' });
+    
+  } catch (error) {
+    console.log(error);
+    res.status(400).json(error);
+  }
+})
+
+app.delete('/api/user/delete/:id',async (req,res) =>{
+
+  
+  try {
+   const uid = req.params.id;
+    const doc = await User.findOneAndDelete({_id: uid})
+    res.status(201).json({doc, message: "Account deleted Successfully !"});
+   
+    
+  } catch (error) {
+    res.status(200).json({error, message: "Unable to delete account, try again later."});
+    console.log(error);
+  }
+
 })
 
 // app.patch('/api/update', async (req,res)=>{
