@@ -8,6 +8,7 @@ const User = require('./model/user');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const cookieparser = require('cookie-parser');
+const mongodb = require('mongodb');
 require('dotenv').config();
 
 
@@ -286,11 +287,61 @@ app.patch('/', (req,res) =>{
     res.json({name:name ,message: "This is a patch test request"});
 })
 
-app.delete('/', (req,res) =>{
-    const {name} = req.body;
+app.delete('/api/blog/delete/:id',async (req,res) =>{
 
-    res.json({name:`hii ${name}`,message: "This is a delete test request"});
+  
+  try {
+   const bid = req.params.id;
+    const doc = await Blog.findOneAndDelete({_id: bid})
+    res.status(201).json({doc, message: "Blog deleted Successfully !"});
+   
+    
+  } catch (error) {
+    res.status(200).json({error, message: "Unable to delete Blog, try again later."});
+    console.log(error);
+  }
+
 })
+
+app.patch('/api/blog/deletefromuser',async (req,res) =>{
+
+  
+  try {
+  //  const uid = req.params.id;
+   const {uid,bid} = req.body;
+   console.log(bid)
+    const doc = await User.findById(uid);
+    if(doc){
+      const bb = doc.blogposted;
+      const data = bb.find((element) => element._id.toString() === bid._id);
+      const key = bid._id ;
+      const newkey = new mongodb.ObjectId(key);
+    
+     
+      if(data){
+        const del = await User.updateOne({_id: uid}, {$pull:{blogposted: {_id: newkey}}},{ returnOriginal: false })
+        res.status(201).json({ message: "Blog deleted Successfully !"});
+
+       }
+
+       else{
+        res.status(201).json({ message: "Blog not deleted Successfully !"});
+       }
+      
+
+    }
+   
+    
+  } catch (error) {
+    res.status(200).json({error, message: "Unable to delete Blog, try again later."});
+    console.log(error);
+  }
+
+})
+
+
+
+
 
 
 
