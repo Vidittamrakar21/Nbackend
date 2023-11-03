@@ -21,6 +21,26 @@
              "src": "/api/(.*)",
             "dest": "server.js"
         },
+
+          {
+             "src": "/api/upload/:id",
+            "dest": "server.js"
+        },
+
+          {
+             "src": "/api/oneb/:id",
+            "dest": "server.js"
+        },
+
+          {
+             "src": "/api/blog/delete/:id",
+            "dest": "server.js"
+        },
+
+          {
+             "src": "/api/user/delete/:id",
+            "dest": "server.js"
+        },
           {
              "src": "/check",
             "dest": "server.js"
