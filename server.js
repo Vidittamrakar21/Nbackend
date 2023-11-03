@@ -9,6 +9,8 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const cookieparser = require('cookie-parser');
 const mongodb = require('mongodb');
+const multer = require('multer');
+const path = require('path');
 require('dotenv').config();
 
 
@@ -54,6 +56,31 @@ const auth = (req,res,next) => {
 
  app.get('/check', auth)
 
+
+ const storage = multer.diskStorage({
+      destination: (req, file ,cb) => {
+        cb(null, 'build/images')
+      },
+      filename: (req , file , cb) => {
+        cb(null , file.fieldname + "_" + Date.now() + path.extname(file.originalname))
+      }
+ })
+
+ const upload = multer({
+  storage: storage
+ })
+
+ app.post('/api/upload/:id' , upload.single('file'), async (req,res)=> {
+    try {
+      const id = req.params.id;
+      const data = await User.updateOne({_id: id}, {image: req.file.filename});
+
+      res.status(201).json({message: "Profile photo updated successfully !"})
+      
+    } catch (error) {
+      res.json({message: "Unable to upload photo , try again later!"})
+    }
+ })
 app.get('/api/blogs', async (req,res) =>{
   try {
     let limit = parseInt(req.query.limit);

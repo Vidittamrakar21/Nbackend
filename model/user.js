@@ -13,8 +13,8 @@ const userschema = new Schema({
     saved: {type: Array, default:[]},
     about: {type: String, default:""},
     token: String,
-    date: {type: Date, default: Date.now}
-    // image: String;
+    date: {type: Date, default: Date.now},
+    image: String
 
 
 })
