@@ -1,0 +1,89 @@
+{
+    "builds": [
+        {
+            "src": "server.js",
+            "use": "@vercel/node"
+        },
+
+        {
+            "src": "build/**",
+            "use": "@vercel/static"
+        }
+    ],
+
+    "routes": [
+        {
+             "src": "/api",
+            "dest": "server.js"
+        },
+
+          {
+             "src": "/api/(.*)",
+            "dest": "server.js"
+        },
+          {
+             "src": "/check",
+            "dest": "server.js"
+        },
+
+         {
+             "src": "/",
+            "dest": "build/index.html"
+        },
+
+        {
+             "src": "/life",
+            "dest": "build/index.html"
+        },
+
+        {
+             "src": "/tech",
+            "dest": "build/index.html"
+        },
+
+        {
+             "src": "/food",
+            "dest": "build/index.html"
+        },
+
+        {
+             "src": "/entre",
+            "dest": "build/index.html"
+        },
+
+        {
+             "src": "/profile",
+            "dest": "build/index.html"
+        },
+
+        {
+             "src": "/search",
+            "dest": "build/index.html"
+        },
+        {
+             "src": "/blog",
+            "dest": "build/index.html"
+        },
+        {
+             "src": "/blog/(.*)",
+            "dest": "build/index.html"
+        },
+        {
+             "src": "/user",
+            "dest": "build/index.html"
+        },
+        {
+             "src": "/other",
+            "dest": "build/index.html"
+        },
+        {
+             "src": "/write",
+            "dest": "build/index.html"
+        },
+
+        {
+             "src": "/(.+)",
+            "dest": "build/$1"
+        }
+    ]
+}
