@@ -3,7 +3,7 @@
 
     "builds": [
         {
-            "src": "server.js",
+            "src": "index.js",
             "use": "@vercel/node"
         }
 
@@ -13,41 +13,41 @@
 
         {
             "src": "/(.*)",
-           "dest": "server.js"
+           "dest": "index.js"
        },
         {
              "src": "/api",
-            "dest": "server.js"
+            "dest": "index.js"
         },
 
 
           {
              "src": "/api/(.*)",
-            "dest": "server.js"
+            "dest": "index.js"
         },
 
           {
              "src": "/api/upload/:id",
-            "dest": "server.js"
+            "dest": "index.js"
         },
 
           {
              "src": "/api/oneb/:id",
-            "dest": "server.js"
+            "dest": "index.js"
         },
 
           {
              "src": "/api/blog/delete/:id",
-            "dest": "server.js"
+            "dest": "index.js"
         },
 
           {
              "src": "/api/user/delete/:id",
-            "dest": "server.js"
+            "dest": "index.js"
         },
           {
              "src": "/check",
-            "dest": "server.js"
+            "dest": "index.js"
         },
 
          {
