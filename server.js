@@ -56,6 +56,10 @@ const auth = (req,res,next) => {
 
  app.get('/check', auth)
 
+ app.get('/', (req, res)=>{
+  res.json("hello");
+ })
+
 
  const storage = multer.diskStorage({
       destination: (req, file ,cb) => {
