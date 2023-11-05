@@ -31,7 +31,7 @@ async function main() {
 
 const auth = (req,res,next) => {
   try {
-   const {token} = req.cookies;
+   const {token} = req.body;
    if(token){
     const user = jwt.verify(token,process.env.SECKEY);
     req.userID = user.id;
