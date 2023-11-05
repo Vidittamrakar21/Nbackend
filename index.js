@@ -20,7 +20,7 @@ app.use(express.json());
 app.use(cors());
 app.use(cookieparser());
 app.use(morgan("tiny"));
-// app.use(express.static('build'));
+app.use(express.static('build'));
 
 main().catch(err => console.log(err));
 
@@ -56,9 +56,9 @@ const auth = (req,res,next) => {
 
  app.get('/check', auth)
 
- // app.get('/', (req, res)=>{
- //  res.json("hello");
- // })
+ app.get('/', (req, res)=>{
+  res.json("hello");
+ })
 
 
  const storage = multer.diskStorage({
